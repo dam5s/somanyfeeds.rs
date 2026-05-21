@@ -4,3 +4,23 @@ members = [
     "pkgs/*",
 ]
 resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+
+[workspace.dependencies]
+# Internal packages
+feeds_processing = { path = "pkgs/feeds_processing" }
+
+# External dependencies
+axum = "0.7.9"
+tokio = { version = "1.41.1", features = ["full"] }
+tower = { version = "0.5.3", features = ["util"] }
+askama = "0.12.1"
+askama_axum = "0.4.0"
+serde = { version = "1.0", features = ["derive"] }
+chrono = { version = "0.4", features = ["serde"] }
+quick-xml = { version = "0.37", features = ["serialize"] }
+reqwest = "0.12"
+wiremock = "0.6"

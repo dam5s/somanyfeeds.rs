@@ -1,17 +1,17 @@
 [package]
 name = "somanyfeeds_server"
-version = "0.1.0"
-edition = "2024"
+version.workspace = true
+edition.workspace = true
 
 [dependencies]
-axum = "0.7.9"
-tokio = { version = "1.41.1", features = ["full"] }
-tower = { version = "0.5.3", features = ["util"] }
-askama = "0.12.1"
-askama_axum = "0.4.0"
-serde = { version = "1.0", features = ["derive"] }
-chrono = { version = "0.4", features = ["serde"] }
-feeds_processing = { path = "../../pkgs/feeds_processing" }
+axum.workspace = true
+tokio.workspace = true
+tower.workspace = true
+askama.workspace = true
+askama_axum.workspace = true
+serde.workspace = true
+chrono.workspace = true
+feeds_processing.workspace = true
 
 [dev-dependencies]
-wiremock = "0.6"
+wiremock.workspace = true
