@@ -1422,9 +1422,11 @@ dependencies = [
  "askama_axum",
  "axum",
  "chrono",
+ "feeds_processing",
  "serde",
  "tokio",
  "tower",
+ "wiremock",
 ]
 
 [[package]]
