@@ -6,7 +6,7 @@ pub struct DownloadedContent {
 }
 
 pub struct Article {
-    pub title: String,
+    pub title: Option<String>,
 }
 
 #[derive(Debug)]
@@ -56,7 +56,7 @@ struct Atom {
 
 #[derive(Deserialize)]
 struct AtomEntry {
-    title: AtomTitle,
+    title: Option<AtomTitle>,
 }
 
 #[derive(Deserialize)]
@@ -72,7 +72,7 @@ pub fn parse_feed(content: &str) -> Result<Vec<Article>, FeedsProcessingError> {
             .items
             .into_iter()
             .map(|item| Article {
-                title: item.title.unwrap_or_default(),
+                title: item.title,
             })
             .collect());
     }
@@ -82,7 +82,7 @@ pub fn parse_feed(content: &str) -> Result<Vec<Article>, FeedsProcessingError> {
             .entries
             .into_iter()
             .map(|entry| Article {
-                title: entry.title.content,
+                title: entry.title.map(|t| t.content),
             })
             .collect());
     }
