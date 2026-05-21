@@ -1,4 +1,6 @@
 use std::sync::Arc;
+use tracing::info;
+use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use somanyfeeds_server::{
     app::app,
     env::load_env_num,
@@ -9,6 +11,14 @@ use somanyfeeds_server::{
 
 #[tokio::main]
 async fn main() {
+    tracing_subscriber::registry()
+        .with(
+            tracing_subscriber::EnvFilter::try_from_default_env()
+                .unwrap_or_else(|_| "somanyfeeds_server=info,feeds_processing=info".into()),
+        )
+        .with(tracing_subscriber::fmt::layer())
+        .init();
+
     let worker_interval_seconds = load_env_num("WORKER_INTERVAL_SECONDS", 300);
     let worker_settings = WorkerSettings::new(worker_interval_seconds);
 
@@ -40,6 +50,6 @@ async fn main() {
 
     let listener = tokio::net::TcpListener::bind(&server_addr).await.unwrap();
 
-    println!("listening on {}", listener.local_addr().unwrap());
+    info!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app(articles_repository)).await.unwrap();
 }

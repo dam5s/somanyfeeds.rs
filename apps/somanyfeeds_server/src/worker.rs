@@ -1,6 +1,7 @@
 use std::time::Duration;
 use tokio::time::interval;
 use std::sync::Arc;
+use tracing::{info, error};
 use crate::feeds::{FeedRecord, FeedsRepository};
 use crate::articles::{ArticleRecord, ArticlesRepository};
 use feeds_processing::FeedsProcessingError;
@@ -53,27 +54,27 @@ impl Worker {
         feeds_repository: Arc<FeedsRepository>,
         articles_repository: Arc<ArticlesRepository>,
     ) {
-        println!("Worker is running...");
+        info!("Worker is running...");
         let feeds = feeds_repository.find_all().await;
         let mut all_articles = Vec::new();
 
         for feed in feeds {
-            println!("Loading feed: {} ({})", feed.name, feed.url);
+            info!("Loading feed: {} ({})", feed.name, feed.url);
             match Self::fetch_feed_articles(&feed).await {
                 Ok(articles) => {
-                    println!("Successfully fetched {} articles from {}", articles.len(), feed.name);
+                    info!("Successfully fetched {} articles from {}", articles.len(), feed.name);
                     all_articles.extend(articles);
                 }
                 Err(e) => match e {
-                    FeedsProcessingError::Network(_) => eprintln!("Error downloading feed {}: {:?}", feed.url, e),
-                    FeedsProcessingError::Parsing(_) => eprintln!("Error parsing feed {}: {:?}", feed.url, e),
+                    FeedsProcessingError::Network(_) => error!("Error downloading feed {}: {:?}", feed.url, e),
+                    FeedsProcessingError::Parsing(_) => error!("Error parsing feed {}: {:?}", feed.url, e),
                 },
             }
         }
 
         let article_count = all_articles.len();
         articles_repository.replace_all(all_articles).await;
-        println!("Worker run finished. Total articles: {}", article_count);
+        info!("Worker run finished. Total articles: {}", article_count);
     }
 
     async fn fetch_feed_articles(feed: &FeedRecord) -> Result<Vec<ArticleRecord>, FeedsProcessingError> {

@@ -17,6 +17,9 @@ feeds_processing = { path = "pkgs/feeds_processing" }
 axum = "0.7.9"
 tokio = { version = "1.41.1", features = ["full"] }
 tower = { version = "0.5.3", features = ["util"] }
+tower-http = { version = "0.6.1", features = ["trace"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 askama = "0.12.1"
 askama_axum = "0.4.0"
 serde = { version = "1.0", features = ["derive"] }
