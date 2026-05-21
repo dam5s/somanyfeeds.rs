@@ -7,6 +7,9 @@ use axum::{
 use askama::Template;
 use serde::Deserialize;
 
+pub mod worker;
+pub mod env;
+
 pub fn app() -> Router {
     Router::new().route("/", get(handler))
 }

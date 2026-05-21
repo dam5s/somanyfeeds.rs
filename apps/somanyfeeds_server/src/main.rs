@@ -1,19 +1,19 @@
-use somanyfeeds_server::app;
+use somanyfeeds_server::{app, env::load_env_num, worker::{Worker, WorkerSettings}};
 
 #[tokio::main]
 async fn main() {
-    let port: u16 = std::env::var("PORT")
-        .unwrap_or_else(|_| "3000".to_string())
-        .parse()
-        .expect("PORT must be a valid port number");
+    let worker_interval_seconds = load_env_num("WORKER_INTERVAL_SECONDS", 30);
+    let worker_settings = WorkerSettings::new(worker_interval_seconds);
 
-    let app = app();
+    Worker::new(worker_settings).start();
 
-    let addr = format!("127.0.0.1:{}", port);
-    let listener = tokio::net::TcpListener::bind(&addr)
+    let port: u16 = load_env_num("PORT", 3000);
+    let server_addr = format!("127.0.0.1:{}", port);
+
+    let listener = tokio::net::TcpListener::bind(&server_addr)
         .await
         .unwrap();
 
     println!("listening on {}", listener.local_addr().unwrap());
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, app()).await.unwrap();
 }
