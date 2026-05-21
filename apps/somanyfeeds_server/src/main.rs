@@ -1,6 +1,6 @@
 use std::sync::Arc;
 use somanyfeeds_server::{
-    app,
+    app::app,
     env::load_env_num,
     feeds::{FeedRecord, FeedsRepository},
     articles::ArticlesRepository,

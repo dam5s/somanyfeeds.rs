@@ -3,7 +3,7 @@ use axum::{
     http::{Request, StatusCode},
 };
 use tower::ServiceExt; // for `oneshot`
-use somanyfeeds_server::app;
+use somanyfeeds_server::app::app;
 use somanyfeeds_server::articles::{ArticleRecord, ArticlesRepository};
 use std::sync::Arc;
 use chrono::Utc;
