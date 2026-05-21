@@ -9,6 +9,7 @@ use serde::Deserialize;
 
 pub mod worker;
 pub mod env;
+pub mod feeds;
 
 pub fn app() -> Router {
     Router::new().route("/", get(handler))

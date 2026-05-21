@@ -1,11 +1,24 @@
-use somanyfeeds_server::{app, env::load_env_num, worker::{Worker, WorkerSettings}};
+use somanyfeeds_server::{
+    app,
+    env::load_env_num,
+    worker::{Worker, WorkerSettings},
+    feeds::{FeedRecord, FeedsRepository},
+};
 
 #[tokio::main]
 async fn main() {
     let worker_interval_seconds = load_env_num("WORKER_INTERVAL_SECONDS", 30);
     let worker_settings = WorkerSettings::new(worker_interval_seconds);
 
-    Worker::new(worker_settings).start();
+    let feeds = vec![
+        FeedRecord {
+            name: "Example Feed".to_string(),
+            url: "https://example.com".to_string(),
+        },
+    ];
+    let repository = FeedsRepository::new(feeds);
+
+    Worker::new(worker_settings, repository).start();
 
     let port: u16 = load_env_num("PORT", 3000);
     let server_addr = format!("127.0.0.1:{}", port);
