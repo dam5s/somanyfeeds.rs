@@ -1,13 +1,13 @@
-use super::*;
 use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
 use tower::ServiceExt; // for `oneshot`
+use somanyfeeds::app;
 
 #[tokio::test]
 async fn hello_world() {
-    let app = Router::new().route("/", get(handler));
+    let app = app();
 
     let response = app
         .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())

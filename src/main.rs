@@ -1,8 +1,4 @@
-use axum::{
-    routing::get,
-    response::Html,
-    Router,
-};
+use somanyfeeds::app;
 
 #[tokio::main]
 async fn main() {
@@ -11,21 +7,13 @@ async fn main() {
         .parse()
         .expect("PORT must be a valid port number");
 
-    // build our application with a route
-    let app = Router::new().route("/", get(handler));
+    let app = app();
 
-    // run it with hyper on localhost
     let addr = format!("127.0.0.1:{}", port);
     let listener = tokio::net::TcpListener::bind(&addr)
         .await
         .unwrap();
+
     println!("listening on {}", listener.local_addr().unwrap());
     axum::serve(listener, app).await.unwrap();
 }
-
-async fn handler() -> Html<&'static str> {
-    Html("<h1>Hello World</h1>")
-}
-
-#[cfg(test)]
-mod tests;
