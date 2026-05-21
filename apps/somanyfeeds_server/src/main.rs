@@ -1,4 +1,4 @@
-use somanyfeeds::app;
+use somanyfeeds_server::app;
 
 #[tokio::main]
 async fn main() {

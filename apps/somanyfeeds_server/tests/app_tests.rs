@@ -3,7 +3,7 @@ use axum::{
     http::{Request, StatusCode},
 };
 use tower::ServiceExt; // for `oneshot`
-use somanyfeeds::app;
+use somanyfeeds_server::app;
 
 #[tokio::test]
 async fn hello_world() {
