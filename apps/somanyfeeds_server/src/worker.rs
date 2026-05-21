@@ -80,7 +80,7 @@ impl Worker {
         let downloaded = feeds_processing::download_content(&feed.url).await?;
         let articles = feeds_processing::parse_feed(&downloaded.content)?;
 
-        Ok(articles
+        let mut article_records: Vec<ArticleRecord> = articles
             .into_iter()
             .map(|article| ArticleRecord {
                 title: article.title,
@@ -90,6 +90,11 @@ impl Worker {
                 feed_name: feed.name.clone(),
                 feed_url: feed.url.clone(),
             })
-            .collect())
+            .collect();
+
+        article_records.sort_by(|a, b| b.date.cmp(&a.date));
+        article_records.truncate(20);
+
+        Ok(article_records)
     }
 }

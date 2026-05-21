@@ -28,7 +28,6 @@ struct ArticlesTemplate {
 async fn handler(State(articles_repository): State<Arc<ArticlesRepository>>) -> impl IntoResponse {
     let mut articles = articles_repository.find_all().await;
     articles.sort_by(|a, b| b.date.cmp(&a.date));
-    let articles = articles.into_iter().take(30).collect();
 
     ArticlesTemplate { articles }
 }
