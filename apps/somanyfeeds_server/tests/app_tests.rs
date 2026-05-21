@@ -19,3 +19,23 @@ async fn hello_world() {
     let body = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
     assert_eq!(&body[..], b"<h1>Hello World</h1>");
 }
+
+#[tokio::test]
+async fn hello_name() {
+    let app = app();
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri("/?name=Junie")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let body = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
+    assert_eq!(&body[..], b"<h1>Hello Junie</h1>");
+}

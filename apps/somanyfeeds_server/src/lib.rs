@@ -1,13 +1,28 @@
 use axum::{
+    extract::Query,
+    response::IntoResponse,
     routing::get,
-    response::Html,
     Router,
 };
+use askama::Template;
+use serde::Deserialize;
 
 pub fn app() -> Router {
     Router::new().route("/", get(handler))
 }
 
-async fn handler() -> Html<&'static str> {
-    Html("<h1>Hello World</h1>")
+#[derive(Template)]
+#[template(path = "hello.html")]
+struct HelloTemplate {
+    name: String,
+}
+
+#[derive(Deserialize)]
+struct HelloParams {
+    name: Option<String>,
+}
+
+async fn handler(Query(params): Query<HelloParams>) -> impl IntoResponse {
+    let name = params.name.unwrap_or_else(|| "World".to_string());
+    HelloTemplate { name }
 }
