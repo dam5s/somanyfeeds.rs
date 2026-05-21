@@ -9,7 +9,7 @@ use somanyfeeds_server::{
 
 #[tokio::main]
 async fn main() {
-    let worker_interval_seconds = load_env_num("WORKER_INTERVAL_SECONDS", 30);
+    let worker_interval_seconds = load_env_num("WORKER_INTERVAL_SECONDS", 300);
     let worker_settings = WorkerSettings::new(worker_interval_seconds);
 
     let feeds = vec![
