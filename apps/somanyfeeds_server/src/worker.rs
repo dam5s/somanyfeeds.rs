@@ -25,13 +25,13 @@ pub struct Worker {
 impl Worker {
     pub fn new(
         settings: WorkerSettings,
-        feeds_repository: FeedsRepository,
-        articles_repository: ArticlesRepository,
+        feeds_repository: Arc<FeedsRepository>,
+        articles_repository: Arc<ArticlesRepository>,
     ) -> Self {
         Self {
             settings,
-            feeds_repository: Arc::new(feeds_repository),
-            articles_repository: Arc::new(articles_repository),
+            feeds_repository,
+            articles_repository,
         }
     }
 

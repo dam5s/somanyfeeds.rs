@@ -60,7 +60,7 @@ async fn test_worker_run_work_accumulates_articles() {
 #[tokio::test]
 async fn test_worker_new() {
     let settings = WorkerSettings::new(30);
-    let feeds_repository = FeedsRepository::new(vec![]);
-    let articles_repository = ArticlesRepository::default();
+    let feeds_repository = Arc::new(FeedsRepository::new(vec![]));
+    let articles_repository = Arc::new(ArticlesRepository::default());
     let _worker = Worker::new(settings, feeds_repository, articles_repository);
 }

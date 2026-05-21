@@ -1,33 +1,34 @@
+use std::sync::Arc;
 use axum::{
-    extract::Query,
+    extract::State,
     response::IntoResponse,
     routing::get,
     Router,
 };
 use askama::Template;
-use serde::Deserialize;
+use crate::articles::{ArticleRecord, ArticlesRepository};
 
 pub mod worker;
 pub mod env;
 pub mod feeds;
 pub mod articles;
 
-pub fn app() -> Router {
-    Router::new().route("/", get(handler))
+pub fn app(articles_repository: Arc<ArticlesRepository>) -> Router {
+    Router::new()
+        .route("/", get(handler))
+        .with_state(articles_repository)
 }
 
 #[derive(Template)]
-#[template(path = "hello.html")]
-struct HelloTemplate {
-    name: String,
+#[template(path = "articles.html")]
+struct ArticlesTemplate {
+    articles: Vec<ArticleRecord>,
 }
 
-#[derive(Deserialize)]
-struct HelloParams {
-    name: Option<String>,
-}
+async fn handler(State(articles_repository): State<Arc<ArticlesRepository>>) -> impl IntoResponse {
+    let mut articles = articles_repository.find_all().await;
+    articles.sort_by(|a, b| b.date.cmp(&a.date));
+    let articles = articles.into_iter().take(30).collect();
 
-async fn handler(Query(params): Query<HelloParams>) -> impl IntoResponse {
-    let name = params.name.unwrap_or_else(|| "World".to_string());
-    HelloTemplate { name }
+    ArticlesTemplate { articles }
 }

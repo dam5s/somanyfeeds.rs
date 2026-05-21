@@ -1,3 +1,4 @@
+use std::sync::Arc;
 use somanyfeeds_server::{
     app,
     env::load_env_num,
@@ -29,10 +30,10 @@ async fn main() {
             url: "https://bsky.app/profile/did:plc:zvnvcicnso363xz3gu6ho3mw/rss".to_string(),
         },
     ];
-    let feeds_repository = FeedsRepository::new(feeds);
-    let articles_repository = ArticlesRepository::default();
+    let feeds_repository = Arc::new(FeedsRepository::new(feeds));
+    let articles_repository = Arc::new(ArticlesRepository::default());
 
-    Worker::new(worker_settings, feeds_repository, articles_repository).start();
+    Worker::new(worker_settings, feeds_repository, articles_repository.clone()).start();
 
     let port: u16 = load_env_num("PORT", 3000);
     let server_addr = format!("127.0.0.1:{}", port);
@@ -40,5 +41,5 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(&server_addr).await.unwrap();
 
     println!("listening on {}", listener.local_addr().unwrap());
-    axum::serve(listener, app()).await.unwrap();
+    axum::serve(listener, app(articles_repository)).await.unwrap();
 }
