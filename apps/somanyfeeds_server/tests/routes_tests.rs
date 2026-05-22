@@ -3,7 +3,7 @@ use axum::{
     http::{Request, StatusCode},
 };
 use tower::ServiceExt; // for `oneshot`
-use somanyfeeds_server::routes::router;
+use somanyfeeds_server::routes::{router, RouterSettings};
 use somanyfeeds_server::articles::{ArticleRecord, ArticlesRepository};
 use std::sync::Arc;
 use chrono::Utc;
@@ -24,7 +24,10 @@ async fn it_lists_articles() {
     ];
     articles_repository.replace_all(articles).await;
 
-    let app = router(articles_repository);
+    let settings = RouterSettings {
+        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
+    };
+    let app = router(articles_repository, settings);
 
     let response = app
         .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
@@ -56,7 +59,10 @@ async fn it_sorts_and_limits_articles() {
     }
     articles_repository.replace_all(articles).await;
 
-    let app = router(articles_repository);
+    let settings = RouterSettings {
+        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
+    };
+    let app = router(articles_repository, settings);
 
     let response = app
         .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
@@ -70,4 +76,31 @@ async fn it_sorts_and_limits_articles() {
     assert!(body_str.contains("Article 39"));
     // Should NOT contain Article 0 (oldest, beyond 30 limit)
     assert!(!body_str.contains("Article 0"));
+}
+
+#[tokio::test]
+async fn it_serves_static_files() {
+    let articles_repository = Arc::new(ArticlesRepository::default());
+    let settings = RouterSettings {
+        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
+    };
+    let app = router(articles_repository, settings);
+
+    let response = app
+        .oneshot(
+            Request::builder()
+                .uri("/app.css")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let body = axum::body::to_bytes(response.into_body(), usize::MAX)
+        .await
+        .unwrap();
+    let body_str = String::from_utf8(body.to_vec()).unwrap();
+    assert!(body_str.contains(":root {"));
 }

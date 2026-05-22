@@ -1,6 +1,10 @@
 use std::fmt::Debug;
 use std::str::FromStr;
 
+pub fn load_env_str(key: &str, default: String) -> String {
+    std::env::var(key).unwrap_or(default)
+}
+
 pub fn load_env_num<T>(key: &str, default: T) -> T
 where
     T: FromStr,

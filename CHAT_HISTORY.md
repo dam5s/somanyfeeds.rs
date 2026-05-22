@@ -108,3 +108,10 @@
 ## Chat 16
 
  * The templates are currently stored in the somanyfeeds_server/templates directory, can we move those into somanyfeeds_server/resources/templates instead?
+ * I added a reset.css and app.css in the resources/public folder. Let's have the web app able to serve static files in the public folder.
+   Then let's add a reference to app.css in the articles.html template.
+ * We are setting the public_path from the value of CARGO_MANIFEST_DIR, does that work when running the app after compilation? Or does that only work when using cargo run?
+ * This is better, now instead of loading values from the environment inside of the router function, let's make a RouterSettings type and pass it as an argument to the router function. It should have a public_path field.
+ * I noticed that the css link in articles.html is to /public/app.css, I want this to work directly with /app.css
+    That is any file in the public path should be accessible at the root of the http server.
+    GET /app.css should return the content of app.css inside the public directory.

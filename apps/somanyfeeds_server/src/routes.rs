@@ -6,12 +6,17 @@ use axum::{
     Router,
 };
 use askama::Template;
-use tower_http::trace::TraceLayer;
+use tower_http::{services::ServeDir, trace::TraceLayer};
 use crate::articles::{ArticleRecord, ArticlesRepository};
 
-pub fn router(articles_repository: Arc<ArticlesRepository>) -> Router {
+pub struct RouterSettings {
+    pub public_path: String,
+}
+
+pub fn router(articles_repository: Arc<ArticlesRepository>, settings: RouterSettings) -> Router {
     Router::new()
         .route("/", get(handler))
+        .fallback_service(ServeDir::new(settings.public_path))
         .layer(TraceLayer::new_for_http())
         .with_state(articles_repository)
 }

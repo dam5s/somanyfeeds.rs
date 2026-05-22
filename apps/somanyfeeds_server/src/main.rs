@@ -2,8 +2,8 @@ use std::sync::Arc;
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use somanyfeeds_server::{
-    routes::router,
-    env::load_env_num,
+    routes::{router, RouterSettings},
+    env::{load_env_num, load_env_str},
     feeds::{FeedRecord, FeedsRepository},
     articles::ArticlesRepository,
     worker::{Worker, WorkerSettings},
@@ -48,8 +48,12 @@ async fn main() {
     let port: u16 = load_env_num("PORT", 3000);
     let server_addr = format!("127.0.0.1:{}", port);
 
+    let default_public_path = format!("{}/resources/public", env!("CARGO_MANIFEST_DIR"));
+    let public_path = load_env_str("PUBLIC_PATH", default_public_path);
+    let router_settings = RouterSettings { public_path };
+
     let listener = tokio::net::TcpListener::bind(&server_addr).await.unwrap();
 
     info!("listening on {}", listener.local_addr().unwrap());
-    axum::serve(listener, router(articles_repository)).await.unwrap();
+    axum::serve(listener, router(articles_repository, router_settings)).await.unwrap();
 }

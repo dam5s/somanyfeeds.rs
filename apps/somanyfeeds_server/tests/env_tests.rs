@@ -1,5 +1,20 @@
-use somanyfeeds_server::env::load_env_num;
+use somanyfeeds_server::env::{load_env_num, load_env_str};
 use std::env;
+
+#[test]
+fn test_load_env_str_default() {
+    let key = "TEST_ENV_VAR_STR_DEFAULT";
+    unsafe { env::remove_var(key); }
+    assert_eq!(load_env_str(key, "default".to_string()), "default");
+}
+
+#[test]
+fn test_load_env_str_present() {
+    let key = "TEST_ENV_VAR_STR_PRESENT";
+    unsafe { env::set_var(key, "present"); }
+    assert_eq!(load_env_str(key, "default".to_string()), "present");
+    unsafe { env::remove_var(key); }
+}
 
 #[test]
 fn test_load_env_num_default() {

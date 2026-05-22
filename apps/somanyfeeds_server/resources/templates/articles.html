@@ -2,25 +2,27 @@
 <html>
 <head>
     <title>So Many Feeds</title>
+    <link rel="stylesheet" href="/app.css">
 </head>
 <body>
-    <h1>Articles</h1>
+    <h1>damo.io</h1>
     {% for article in articles %}
     <article>
-        <h2>
-            {% match article.link %}
-                {% when Some with (url) %}
-                    <a href="{{ url }}">{{ article.title.as_deref().unwrap_or("Untitled") }}</a>
-                {% when None %}
-                    {{ article.title.as_deref().unwrap_or("Untitled") }}
-            {% endmatch %}
-        </h2>
-        <p><i>{{ article.feed_name }} - {{ article.date }}</i></p>
-        <div>
+        <header>
+            <h1>
+                {% match article.link %}
+                    {% when Some with (url) %}
+                        <a href="{{ url }}">{{ article.title.as_deref().unwrap_or("Untitled") }}</a>
+                    {% when None %}
+                        {{ article.title.as_deref().unwrap_or("Untitled") }}
+                {% endmatch %}
+            </h1>
+            <h2>{{ article.feed_name }} - {{ article.date }}</h2>
+        </header>
+        <section>
             {{ article.content|safe }}
-        </div>
+        </section>
     </article>
-    <hr>
     {% endfor %}
 </body>
 </html>
