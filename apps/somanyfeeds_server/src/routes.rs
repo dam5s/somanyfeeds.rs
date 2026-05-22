@@ -9,7 +9,7 @@ use askama::Template;
 use tower_http::trace::TraceLayer;
 use crate::articles::{ArticleRecord, ArticlesRepository};
 
-pub fn app(articles_repository: Arc<ArticlesRepository>) -> Router {
+pub fn router(articles_repository: Arc<ArticlesRepository>) -> Router {
     Router::new()
         .route("/", get(handler))
         .layer(TraceLayer::new_for_http())

@@ -2,7 +2,7 @@ use std::sync::Arc;
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use somanyfeeds_server::{
-    app::app,
+    routes::router,
     env::load_env_num,
     feeds::{FeedRecord, FeedsRepository},
     articles::ArticlesRepository,
@@ -51,5 +51,5 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(&server_addr).await.unwrap();
 
     info!("listening on {}", listener.local_addr().unwrap());
-    axum::serve(listener, app(articles_repository)).await.unwrap();
+    axum::serve(listener, router(articles_repository)).await.unwrap();
 }

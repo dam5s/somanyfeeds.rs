@@ -3,7 +3,7 @@ use axum::{
     http::{Request, StatusCode},
 };
 use tower::ServiceExt; // for `oneshot`
-use somanyfeeds_server::app::app;
+use somanyfeeds_server::routes::router;
 use somanyfeeds_server::articles::{ArticleRecord, ArticlesRepository};
 use std::sync::Arc;
 use chrono::Utc;
@@ -24,7 +24,7 @@ async fn it_lists_articles() {
     ];
     articles_repository.replace_all(articles).await;
 
-    let app = app(articles_repository);
+    let app = router(articles_repository);
 
     let response = app
         .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
@@ -56,7 +56,7 @@ async fn it_sorts_and_limits_articles() {
     }
     articles_repository.replace_all(articles).await;
 
-    let app = app(articles_repository);
+    let app = router(articles_repository);
 
     let response = app
         .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
