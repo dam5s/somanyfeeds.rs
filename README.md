@@ -10,6 +10,10 @@
 - **Build**: Use `cargo build` from the root to build the entire workspace.
 - **Run**: Use `cargo run -p somanyfeeds_server` to start the web server.
 
+### Linux Specific instructions
+
+On linux you may need to install additional dependencies such as `libssl-dev` for building.
+
 ## Testing Information
 - **Run All Tests**: `cargo test`
 - **Run Specific Package Tests**: `cargo test -p somanyfeeds_server` or `cargo test -p feeds_processing`
