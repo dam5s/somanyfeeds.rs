@@ -104,3 +104,7 @@
  * I'm trying to understand what are Arc best practices. Here I see that we assign it to the struct without cloning. When start() in invoked we do clone(), inside of run_work we do not clone but the caller is passing in a clone instead.
     My intuition would have been to just clone() on assignment to the struct.
     I'm more used to the objective-c style of retain release.
+
+## Chat 16
+
+ * The templates are currently stored in the somanyfeeds_server/templates directory, can we move those into somanyfeeds_server/resources/templates instead?
