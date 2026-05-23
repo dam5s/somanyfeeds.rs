@@ -1,13 +1,13 @@
+use somanyfeeds_server::{
+    articles::ArticlesRepository,
+    env::{load_env_num, load_env_str},
+    feeds::{FeedRecord, FeedsRepository},
+    routes::{RouterSettings, router},
+    worker::{Worker, WorkerSettings},
+};
 use std::sync::Arc;
 use tracing::info;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
-use somanyfeeds_server::{
-    routes::{router, RouterSettings},
-    env::{load_env_num, load_env_str},
-    feeds::{FeedRecord, FeedsRepository},
-    articles::ArticlesRepository,
-    worker::{Worker, WorkerSettings},
-};
 
 #[tokio::main]
 async fn main() {
@@ -43,7 +43,12 @@ async fn main() {
     let feeds_repository = Arc::new(FeedsRepository::new(feeds));
     let articles_repository = Arc::new(ArticlesRepository::default());
 
-    Worker::new(worker_settings, feeds_repository, articles_repository.clone()).start();
+    Worker::new(
+        worker_settings,
+        feeds_repository,
+        articles_repository.clone(),
+    )
+    .start();
 
     let port: u16 = load_env_num("PORT", 3000);
     let server_addr = format!("127.0.0.1:{}", port);
@@ -55,5 +60,7 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind(&server_addr).await.unwrap();
 
     info!("listening on {}", listener.local_addr().unwrap());
-    axum::serve(listener, router(articles_repository, router_settings)).await.unwrap();
+    axum::serve(listener, router(articles_repository, router_settings))
+        .await
+        .unwrap();
 }

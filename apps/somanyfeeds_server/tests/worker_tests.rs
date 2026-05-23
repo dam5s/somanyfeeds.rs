@@ -1,9 +1,9 @@
-use somanyfeeds_server::worker::{Worker, WorkerSettings};
-use somanyfeeds_server::feeds::{FeedRecord, FeedsRepository};
 use somanyfeeds_server::articles::ArticlesRepository;
+use somanyfeeds_server::feeds::{FeedRecord, FeedsRepository};
+use somanyfeeds_server::worker::{Worker, WorkerSettings};
 use std::sync::Arc;
-use wiremock::{MockServer, Mock, ResponseTemplate};
 use wiremock::matchers::{method, path};
+use wiremock::{Mock, MockServer, ResponseTemplate};
 
 #[test]
 fn test_worker_settings_new() {
@@ -20,7 +20,7 @@ fn test_worker_settings_new_zero_defaults_to_30() {
 #[tokio::test]
 async fn test_worker_run_work_accumulates_articles() {
     let mock_server = MockServer::start().await;
-    
+
     let feed_content = r#"<?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0">
     <channel>
@@ -40,12 +40,10 @@ async fn test_worker_run_work_accumulates_articles() {
         .mount(&mock_server)
         .await;
 
-    let feeds = vec![
-        FeedRecord {
-            name: "Test Feed".to_string(),
-            url: format!("{}/rss.xml", mock_server.uri()),
-        }
-    ];
+    let feeds = vec![FeedRecord {
+        name: "Test Feed".to_string(),
+        url: format!("{}/rss.xml", mock_server.uri()),
+    }];
     let feeds_repository = Arc::new(FeedsRepository::new(feeds));
     let articles_repository = Arc::new(ArticlesRepository::default());
 

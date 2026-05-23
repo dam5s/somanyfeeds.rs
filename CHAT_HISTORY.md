@@ -134,3 +134,7 @@
  * Let's cleanup the routes_tests, instead of having to instantiate a record and specifying all the fields each time we should make a default record available for tests. Tests should take that default record and only set fields that are relevant to the test, is that possible?
  * In routes_test combine the following tests into a single test: it_lists_articles, it_formats_the_date, it_sorts_articles.
      In general we do not want tests to be named after an expected outcome but more about what is being tested and what is the context being tested.
+
+## Chat 20
+
+ * Run cargo fmt and make sure there are instructions in the README for agents to always run this after they have done their changes.

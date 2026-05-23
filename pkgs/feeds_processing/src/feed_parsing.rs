@@ -1,6 +1,6 @@
-use chrono::{DateTime, Utc};
 use crate::FeedsProcessingError;
-use crate::{rss, atom};
+use crate::{atom, rss};
+use chrono::{DateTime, Utc};
 
 pub struct Article {
     pub title: Option<String>,

@@ -1,5 +1,5 @@
-use serde::Deserialize;
 use crate::{Article, FeedsProcessingError};
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct Rss {
@@ -33,7 +33,10 @@ pub fn parse(content: &str) -> Result<Vec<Article>, FeedsProcessingError> {
             title: item.title,
             link: item.link,
             content: item.description.unwrap_or_default(),
-            date: item.pub_date.map(|d| crate::feed_parsing::parse_date(&d)).unwrap_or_else(chrono::Utc::now),
+            date: item
+                .pub_date
+                .map(|d| crate::feed_parsing::parse_date(&d))
+                .unwrap_or_else(chrono::Utc::now),
         })
         .collect())
 }

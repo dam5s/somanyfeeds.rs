@@ -37,6 +37,6 @@ On linux you may need to install additional dependencies such as `libssl-dev` fo
     - The server uses a background `Worker` to periodically fetch feeds and update an `ArticlesRepository`.
     - The `router` serves the articles using HTML templates (`askama`).
     - `ArticlesRepository` and `FeedsRepository` are shared via `Arc` for thread-safe access.
-- **Code Style**: Follow standard Rust idioms. Use `cargo fmt` for formatting.
+- **Code Style**: Follow standard Rust idioms. Use `cargo fmt` for formatting. Agents MUST always run `cargo fmt` after making any changes to the code.
 - **Debugging**: The project uses `tracing` for logging. You can control log levels via `RUST_LOG` environment variable.
 - **Worker Limits**: Note that the `Worker` currently limits the number of articles per feed to the 20 most recent ones (hardcoded in `worker.rs`).

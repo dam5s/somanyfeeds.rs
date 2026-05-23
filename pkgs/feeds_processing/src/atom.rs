@@ -1,5 +1,5 @@
-use serde::Deserialize;
 use crate::{Article, FeedsProcessingError};
+use serde::Deserialize;
 
 #[derive(Deserialize)]
 pub struct Atom {
@@ -41,13 +41,21 @@ pub fn parse(content: &str) -> Result<Vec<Article>, FeedsProcessingError> {
         .into_iter()
         .map(|entry| {
             let title = entry.title.map(|t| t.content);
-            let link = entry.links.iter()
+            let link = entry
+                .links
+                .iter()
                 .find(|l| l.rel.as_deref() == Some("alternate"))
                 .or_else(|| entry.links.first())
                 .map(|l| l.href.clone());
-            let content = entry.content.or(entry.summary).map(|t| t.content).unwrap_or_default();
+            let content = entry
+                .content
+                .or(entry.summary)
+                .map(|t| t.content)
+                .unwrap_or_default();
             let date_str = entry.published.or(entry.updated);
-            let date = date_str.map(|d| crate::feed_parsing::parse_date(&d)).unwrap_or_else(chrono::Utc::now);
+            let date = date_str
+                .map(|d| crate::feed_parsing::parse_date(&d))
+                .unwrap_or_else(chrono::Utc::now);
 
             Article {
                 title,

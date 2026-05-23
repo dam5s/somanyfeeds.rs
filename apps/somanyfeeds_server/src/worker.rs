@@ -1,10 +1,10 @@
+use crate::articles::{ArticleRecord, ArticlesRepository};
+use crate::feeds::{FeedRecord, FeedsRepository};
+use feeds_processing::FeedsProcessingError;
+use std::sync::Arc;
 use std::time::Duration;
 use tokio::time::interval;
-use std::sync::Arc;
-use tracing::{info, error};
-use crate::feeds::{FeedRecord, FeedsRepository};
-use crate::articles::{ArticleRecord, ArticlesRepository};
-use feeds_processing::FeedsProcessingError;
+use tracing::{error, info};
 
 pub struct WorkerSettings {
     pub interval_seconds: u64,
@@ -12,7 +12,11 @@ pub struct WorkerSettings {
 
 impl WorkerSettings {
     pub fn new(interval_seconds: u64) -> Self {
-        let interval_seconds = if interval_seconds == 0 { 30 } else { interval_seconds };
+        let interval_seconds = if interval_seconds == 0 {
+            30
+        } else {
+            interval_seconds
+        };
         Self { interval_seconds }
     }
 }
@@ -62,12 +66,20 @@ impl Worker {
             info!("Loading feed: {} ({})", feed.name, feed.url);
             match Self::fetch_feed_articles(&feed).await {
                 Ok(articles) => {
-                    info!("Successfully fetched {} articles from {}", articles.len(), feed.name);
+                    info!(
+                        "Successfully fetched {} articles from {}",
+                        articles.len(),
+                        feed.name
+                    );
                     all_articles.extend(articles);
                 }
                 Err(e) => match e {
-                    FeedsProcessingError::Network(_) => error!("Error downloading feed {}: {:?}", feed.url, e),
-                    FeedsProcessingError::Parsing(_) => error!("Error parsing feed {}: {:?}", feed.url, e),
+                    FeedsProcessingError::Network(_) => {
+                        error!("Error downloading feed {}: {:?}", feed.url, e)
+                    }
+                    FeedsProcessingError::Parsing(_) => {
+                        error!("Error parsing feed {}: {:?}", feed.url, e)
+                    }
                 },
             }
         }
@@ -77,7 +89,9 @@ impl Worker {
         info!("Worker run finished. Total articles: {}", article_count);
     }
 
-    async fn fetch_feed_articles(feed: &FeedRecord) -> Result<Vec<ArticleRecord>, FeedsProcessingError> {
+    async fn fetch_feed_articles(
+        feed: &FeedRecord,
+    ) -> Result<Vec<ArticleRecord>, FeedsProcessingError> {
         let downloaded = feeds_processing::download_content(&feed.url).await?;
         let articles = feeds_processing::parse_feed(&downloaded.content)?;
 
