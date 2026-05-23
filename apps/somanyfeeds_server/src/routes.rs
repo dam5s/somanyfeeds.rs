@@ -1,13 +1,9 @@
-use std::sync::Arc;
-use axum::{
-    extract::State,
-    response::IntoResponse,
-    routing::get,
-    Router,
-};
-use askama::Template;
-use tower_http::{services::ServeDir, trace::TraceLayer};
 use crate::articles::{ArticleRecord, ArticlesRepository};
+use askama::Template;
+use axum::{Router, extract::State, response::IntoResponse, routing::get};
+use chrono_tz::America::Denver;
+use std::sync::Arc;
+use tower_http::{services::ServeDir, trace::TraceLayer};
 
 pub struct RouterSettings {
     pub public_path: String,
@@ -23,8 +19,35 @@ pub fn router(articles_repository: Arc<ArticlesRepository>, settings: RouterSett
 
 #[derive(Template)]
 #[template(path = "articles.html")]
-struct ArticlesTemplate {
-    articles: Vec<ArticleRecord>,
+struct ArticleListTemplate {
+    articles: Vec<ArticleView>,
+}
+
+#[allow(dead_code)]
+struct ArticleView {
+    pub title: Option<String>,
+    pub link: Option<String>,
+    pub content: String,
+    pub date: String,
+    pub feed_name: String,
+    pub feed_url: String,
+}
+
+impl From<ArticleRecord> for ArticleView {
+    fn from(record: ArticleRecord) -> Self {
+        Self {
+            title: record.title,
+            link: record.link,
+            content: record.content,
+            date: record
+                .date
+                .with_timezone(&Denver)
+                .format("%b %d '%y @ %H:%M")
+                .to_string(),
+            feed_name: record.feed_name,
+            feed_url: record.feed_url,
+        }
+    }
 }
 
 async fn handler(State(articles_repository): State<Arc<ArticlesRepository>>) -> impl IntoResponse {
@@ -32,5 +55,7 @@ async fn handler(State(articles_repository): State<Arc<ArticlesRepository>>) -> 
     articles.sort_by(|a, b| b.date.cmp(&a.date));
     articles.truncate(30);
 
-    ArticlesTemplate { articles }
+    let articles = articles.into_iter().map(ArticleView::from).collect();
+
+    ArticleListTemplate { articles }
 }

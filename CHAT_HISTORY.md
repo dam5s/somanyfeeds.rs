@@ -115,3 +115,12 @@
  * I noticed that the css link in articles.html is to /public/app.css, I want this to work directly with /app.css
     That is any file in the public path should be accessible at the root of the http server.
     GET /app.css should return the content of app.css inside the public directory.
+
+## Chat 17
+
+ * I want to format the date rendered in the HTML template in routes.rs.
+     Let's rename the type ArticlesTemplate to ArticleListTemplate.
+     Let's create a type ArticleView that will represent a single article and replace the type ArticleRecord in the articles field of ArticlesTemplate.
+     The ArticleView will have the same fields as ArticleRecord except the date field should be of type string.
+     The handler should format the date. The desired format should look like the following example: May 22 '26 @ 05:35 for 2026-05-22T05:35:00Z
+ * The formatted date is in the UTC timezone, let's convert the date to the timezone America/Denver (Mountain Time) before formatting it. It's ok to hardcode that timezone.

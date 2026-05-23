@@ -27,7 +27,7 @@
             </h1>
         {% when None %}
         {% endmatch %}
-        <h2>{{ article.date }}</h2>
+        <h2>{{ article.date|safe }}</h2>
     </header>
     <section>
         {{ article.content|safe }}

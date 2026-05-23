@@ -43,6 +43,38 @@ async fn it_lists_articles() {
 }
 
 #[tokio::test]
+async fn it_formats_the_date() {
+    let articles_repository = Arc::new(ArticlesRepository::default());
+    let date = chrono::DateTime::parse_from_rfc3339("2026-05-22T05:35:00Z").unwrap().with_timezone(&chrono::Utc);
+    let articles = vec![
+        ArticleRecord {
+            title: Some("Article 1".to_string()),
+            link: None,
+            content: "Content 1".to_string(),
+            date,
+            feed_name: "Feed 1".to_string(),
+            feed_url: "https://feed1.com".to_string(),
+        },
+    ];
+    articles_repository.replace_all(articles).await;
+
+    let settings = RouterSettings {
+        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
+    };
+    let app = router(articles_repository, settings);
+
+    let response = app
+        .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+
+    let body = axum::body::to_bytes(response.into_body(), usize::MAX).await.unwrap();
+    let body_str = String::from_utf8(body.to_vec()).unwrap();
+    
+    assert!(body_str.contains("May 21 '26 @ 23:35"));
+}
+
+#[tokio::test]
 async fn it_sorts_and_limits_articles() {
     let articles_repository = Arc::new(ArticlesRepository::default());
     let now = Utc::now();
