@@ -11,6 +11,19 @@ pub struct ArticleRecord {
     pub feed_url: String,
 }
 
+impl Default for ArticleRecord {
+    fn default() -> Self {
+        Self {
+            title: None,
+            link: None,
+            content: "".to_string(),
+            date: Utc::now(),
+            feed_name: "".to_string(),
+            feed_url: "".to_string(),
+        }
+    }
+}
+
 pub struct ArticlesRepository {
     articles: RwLock<Vec<ArticleRecord>>,
 }

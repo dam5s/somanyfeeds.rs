@@ -11,15 +11,11 @@ use chrono::Utc;
 #[tokio::test]
 async fn it_lists_articles() {
     let articles_repository = Arc::new(ArticlesRepository::default());
-    let now = Utc::now();
     let articles = vec![
         ArticleRecord {
             title: Some("Article 1".to_string()),
-            link: Some("https://example.com/1".to_string()),
             content: "Content 1".to_string(),
-            date: now,
-            feed_name: "Feed 1".to_string(),
-            feed_url: "https://feed1.com".to_string(),
+            ..ArticleRecord::default()
         },
     ];
     articles_repository.replace_all(articles).await;
@@ -48,12 +44,8 @@ async fn it_formats_the_date() {
     let date = chrono::DateTime::parse_from_rfc3339("2026-05-22T05:35:00Z").unwrap().with_timezone(&chrono::Utc);
     let articles = vec![
         ArticleRecord {
-            title: Some("Article 1".to_string()),
-            link: None,
-            content: "Content 1".to_string(),
             date,
-            feed_name: "Feed 1".to_string(),
-            feed_url: "https://feed1.com".to_string(),
+            ..ArticleRecord::default()
         },
     ];
     articles_repository.replace_all(articles).await;
@@ -82,11 +74,8 @@ async fn it_sorts_articles() {
     for i in 0..40 {
         articles.push(ArticleRecord {
             title: Some(format!("Article {}", i)),
-            link: None,
-            content: format!("Content {}", i),
             date: now + chrono::TimeDelta::try_seconds(i as i64).unwrap(),
-            feed_name: "Feed".to_string(),
-            feed_url: "url".to_string(),
+            ..ArticleRecord::default()
         });
     }
     articles_repository.replace_all(articles).await;

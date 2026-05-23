@@ -128,3 +128,7 @@
 ## Chat 18
 
  * Let's remove truncation of the number of articles in the handler. We are now truncating per feed in the worker instead. All articles should be rendered.
+
+## Chat 19
+
+ * Let's cleanup the routes_tests, instead of having to instantiate a record and specifying all the fields each time we should make a default record available for tests. Tests should take that default record and only set fields that are relevant to the test, is that possible?

@@ -1,5 +1,4 @@
 use somanyfeeds_server::articles::{ArticleRecord, ArticlesRepository};
-use chrono::Utc;
 
 #[tokio::test]
 async fn it_replaces_and_finds_all_articles() {
@@ -8,19 +7,11 @@ async fn it_replaces_and_finds_all_articles() {
     let articles = vec![
         ArticleRecord {
             title: Some("Article 1".to_string()),
-            link: Some("https://example.com/1".to_string()),
-            content: "Content 1".to_string(),
-            date: Utc::now(),
-            feed_name: "Feed 1".to_string(),
-            feed_url: "https://feed1.com".to_string(),
+            ..ArticleRecord::default()
         },
         ArticleRecord {
             title: Some("Article 2".to_string()),
-            link: Some("https://example.com/2".to_string()),
-            content: "Content 2".to_string(),
-            date: Utc::now(),
-            feed_name: "Feed 2".to_string(),
-            feed_url: "https://feed2.com".to_string(),
+            ..ArticleRecord::default()
         },
     ];
 
