@@ -144,3 +144,5 @@
  * I added a constant called ABOUT_ARTICLE_CONTENT
    In the handler for articles, I want to make sure we always pretend an article that uses that content. Its title should be "About" its date should be empty. Its feed_name can be "About" and feed_url empty.
  * Update test_articles_index in routes_tests to validate the about article is being rendered.
+ * For articles that don't have a title but do have a perma link we don't render the link. Let's update articles.html to have a link on the date as well as the title.
+ * I changed my mind, instead, for articles that do not have a title, let's add a nav that contains a link entitles "Source" inside it. The nav should be after the section for the content of the article.

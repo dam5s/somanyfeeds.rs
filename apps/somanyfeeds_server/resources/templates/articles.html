@@ -32,6 +32,17 @@
     <section>
         {{ article.content|safe }}
     </section>
+    {% match article.title %}
+    {% when None %}
+        {% match article.link %}
+        {% when Some with (url) %}
+            <nav>
+                <a href="{{ url }}">Source</a>
+            </nav>
+        {% when None %}
+        {% endmatch %}
+    {% when Some with (title) %}
+    {% endmatch %}
 </article>
 {% endfor %}
 </main>

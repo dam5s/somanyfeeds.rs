@@ -85,6 +85,87 @@ async fn test_articles_index() {
 }
 
 #[tokio::test]
+async fn test_article_without_title_with_link() {
+    let articles_repository = Arc::new(ArticlesRepository::default());
+    let link = "https://example.com/some-article";
+
+    articles_repository.replace_all(vec![ArticleRecord {
+        title: None,
+        link: Some(link.to_string()),
+        date: chrono::Utc::now(),
+        ..ArticleRecord::default()
+    }]).await;
+
+    let settings = RouterSettings {
+        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
+    };
+    let app = router(articles_repository, settings);
+
+    let response = app
+        .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+
+    let body = axum::body::to_bytes(response.into_body(), usize::MAX)
+        .await
+        .unwrap();
+    let body_str = String::from_utf8(body.to_vec()).unwrap();
+
+    // Verify "Source" link is present in a nav
+    assert!(
+        body_str.contains("<nav>\n                <a href=\"https://example.com/some-article\">Source</a>\n            </nav>"),
+        "Source link should be present in a nav when title is missing. Body: {}", body_str
+    );
+
+    // Verify date is NOT linked
+    assert!(
+        !body_str.contains(&format!("<h2>\n            \n                <a href=\"{}\">", link)),
+        "Date should not be linked. Body: {}", body_str
+    );
+}
+
+#[tokio::test]
+async fn test_article_with_title_and_link() {
+    let articles_repository = Arc::new(ArticlesRepository::default());
+    let link = "https://example.com/some-article";
+    let title = "Article Title";
+
+    articles_repository.replace_all(vec![ArticleRecord {
+        title: Some(title.to_string()),
+        link: Some(link.to_string()),
+        date: chrono::Utc::now(),
+        ..ArticleRecord::default()
+    }]).await;
+
+    let settings = RouterSettings {
+        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
+    };
+    let app = router(articles_repository, settings);
+
+    let response = app
+        .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+
+    let body = axum::body::to_bytes(response.into_body(), usize::MAX)
+        .await
+        .unwrap();
+    let body_str = String::from_utf8(body.to_vec()).unwrap();
+
+    // Verify link is present on title
+    assert!(
+        body_str.contains(&format!("<h1>\n                \n                    <a href=\"{}\">{}</a>", link, title)),
+        "Link should be present on title. Body: {}", body_str
+    );
+
+    // Verify link is NOT present on date
+    assert!(
+        !body_str.contains(&format!("<h2>\n            \n                <a href=\"{}\">", link)),
+        "Link should NOT be present on date. Body: {}", body_str
+    );
+}
+
+#[tokio::test]
 async fn test_static_assets() {
     let articles_repository = Arc::new(ArticlesRepository::default());
     let settings = RouterSettings {
