@@ -1,4 +1,5 @@
 use axum::{
+    Router,
     body::Body,
     http::{Request, StatusCode},
 };
@@ -7,10 +8,16 @@ use somanyfeeds_server::routes::{RouterSettings, router};
 use std::sync::Arc;
 use tower::ServiceExt; // for `oneshot`
 
+fn app(articles: Vec<ArticleRecord>) -> Router {
+    let articles_repository = Arc::new(ArticlesRepository::new(articles));
+    let settings = RouterSettings {
+        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
+    };
+    router(articles_repository, settings)
+}
+
 #[tokio::test]
 async fn test_articles_index() {
-    let articles_repository = Arc::new(ArticlesRepository::default());
-
     // Use a specific date to test formatting (Denver is UTC-6 in May)
     let date_str = "2026-05-22T05:35:00Z";
     let base_date = chrono::DateTime::parse_from_rfc3339(date_str)
@@ -37,12 +44,7 @@ async fn test_articles_index() {
         });
     }
 
-    articles_repository.replace_all(articles).await;
-
-    let settings = RouterSettings {
-        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
-    };
-    let app = router(articles_repository, settings);
+    let app = app(articles);
 
     let response = app
         .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
@@ -86,20 +88,14 @@ async fn test_articles_index() {
 
 #[tokio::test]
 async fn test_article_without_title_with_link() {
-    let articles_repository = Arc::new(ArticlesRepository::default());
     let link = "https://example.com/some-article";
 
-    articles_repository.replace_all(vec![ArticleRecord {
+    let app = app(vec![ArticleRecord {
         title: None,
         link: Some(link.to_string()),
         date: chrono::Utc::now(),
         ..ArticleRecord::default()
-    }]).await;
-
-    let settings = RouterSettings {
-        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
-    };
-    let app = router(articles_repository, settings);
+    }]);
 
     let response = app
         .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
@@ -126,21 +122,15 @@ async fn test_article_without_title_with_link() {
 
 #[tokio::test]
 async fn test_article_with_title_and_link() {
-    let articles_repository = Arc::new(ArticlesRepository::default());
     let link = "https://example.com/some-article";
     let title = "Article Title";
 
-    articles_repository.replace_all(vec![ArticleRecord {
+    let app = app(vec![ArticleRecord {
         title: Some(title.to_string()),
         link: Some(link.to_string()),
         date: chrono::Utc::now(),
         ..ArticleRecord::default()
-    }]).await;
-
-    let settings = RouterSettings {
-        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
-    };
-    let app = router(articles_repository, settings);
+    }]);
 
     let response = app
         .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
@@ -167,11 +157,7 @@ async fn test_article_with_title_and_link() {
 
 #[tokio::test]
 async fn test_static_assets() {
-    let articles_repository = Arc::new(ArticlesRepository::default());
-    let settings = RouterSettings {
-        public_path: format!("{}/resources/public", env!("CARGO_MANIFEST_DIR")),
-    };
-    let app = router(articles_repository, settings);
+    let app = app(vec![]);
 
     let response = app
         .oneshot(

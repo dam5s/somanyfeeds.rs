@@ -146,3 +146,4 @@
  * Update test_articles_index in routes_tests to validate the about article is being rendered.
  * For articles that don't have a title but do have a perma link we don't render the link. Let's update articles.html to have a link on the date as well as the title.
  * I changed my mind, instead, for articles that do not have a title, let's add a nav that contains a link entitles "Source" inside it. The nav should be after the section for the content of the article.
+ * In routes_tests there is some boilerplate that's repetitive, let's extract a function that takes a vector of articles and returns the router.
