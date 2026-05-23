@@ -1,5 +1,9 @@
 # Chat history
 
+Most, if not all of this work was done with Junie and Gemini 3 Flash.
+There are many typos in there, and they were given to the LLM as-is.
+No corrections were made in the log below.
+
 ## Chat 1
 
  * Let's initialize an empty cargo project, the project name is somanyfeeds.
@@ -147,3 +151,4 @@
  * For articles that don't have a title but do have a perma link we don't render the link. Let's update articles.html to have a link on the date as well as the title.
  * I changed my mind, instead, for articles that do not have a title, let's add a nav that contains a link entitles "Source" inside it. The nav should be after the section for the content of the article.
  * In routes_tests there is some boilerplate that's repetitive, let's extract a function that takes a vector of articles and returns the router.
+ * I notices in routes_tests we have an assertion for "Verify date is NOT linked", in general we don't want to test for the absence of code, even if that code was there in the past. Let's check our tests for any such occurrence and remove those assertions.

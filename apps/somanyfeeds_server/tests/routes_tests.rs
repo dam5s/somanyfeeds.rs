@@ -112,12 +112,6 @@ async fn test_article_without_title_with_link() {
         body_str.contains("<nav>\n                <a href=\"https://example.com/some-article\">Source</a>\n            </nav>"),
         "Source link should be present in a nav when title is missing. Body: {}", body_str
     );
-
-    // Verify date is NOT linked
-    assert!(
-        !body_str.contains(&format!("<h2>\n            \n                <a href=\"{}\">", link)),
-        "Date should not be linked. Body: {}", body_str
-    );
 }
 
 #[tokio::test]
@@ -146,12 +140,6 @@ async fn test_article_with_title_and_link() {
     assert!(
         body_str.contains(&format!("<h1>\n                \n                    <a href=\"{}\">{}</a>", link, title)),
         "Link should be present on title. Body: {}", body_str
-    );
-
-    // Verify link is NOT present on date
-    assert!(
-        !body_str.contains(&format!("<h2>\n            \n                <a href=\"{}\">", link)),
-        "Link should NOT be present on date. Body: {}", body_str
     );
 }
 
