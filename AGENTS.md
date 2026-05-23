@@ -1,1 +1,3 @@
 @README.md
+
+@CHAT_HISTORY.md

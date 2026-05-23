@@ -1,7 +1,7 @@
 use somanyfeeds_server::feeds::{FeedRecord, FeedsRepository};
 
 #[tokio::test]
-async fn it_finds_all_feeds() {
+async fn test_feeds_repository() {
     let feeds = vec![
         FeedRecord {
             name: "Feed 1".to_string(),

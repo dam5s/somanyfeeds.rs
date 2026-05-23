@@ -1,7 +1,7 @@
 use somanyfeeds_server::articles::{ArticleRecord, ArticlesRepository};
 
 #[tokio::test]
-async fn it_replaces_and_finds_all_articles() {
+async fn test_articles_repository() {
     let repository = ArticlesRepository::new(Vec::new());
 
     let articles = vec![
