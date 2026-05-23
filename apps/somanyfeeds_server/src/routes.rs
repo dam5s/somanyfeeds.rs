@@ -54,7 +54,19 @@ async fn handler(State(articles_repository): State<Arc<ArticlesRepository>>) -> 
     let mut articles = articles_repository.find_all().await;
     articles.sort_by(|a, b| b.date.cmp(&a.date));
 
-    let articles = articles.into_iter().map(ArticleView::from).collect();
+    let mut articles: Vec<ArticleView> = articles.into_iter().map(ArticleView::from).collect();
+
+    articles.insert(
+        0,
+        ArticleView {
+            title: Some("About".to_string()),
+            link: None,
+            content: crate::about::ABOUT_ARTICLE_CONTENT.to_string(),
+            date: "".to_string(),
+            feed_name: "About".to_string(),
+            feed_url: "".to_string(),
+        },
+    );
 
     ArticleListTemplate { articles }
 }

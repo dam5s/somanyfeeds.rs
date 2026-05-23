@@ -71,6 +71,17 @@ async fn test_articles_index() {
         pos_40 < pos_1,
         "Article 40 should appear before Article 1 (sorted by date descending)"
     );
+
+    // Verify "About" article is present and prepended
+    assert!(body_str.contains("<article class=\"About\">"));
+    assert!(body_str.contains("Damien Le Berrigaud"));
+    let pos_about = body_str
+        .find("<article class=\"About\">")
+        .expect("About article not found");
+    assert!(
+        pos_about < pos_40,
+        "About article should appear before Article 40"
+    );
 }
 
 #[tokio::test]

@@ -138,3 +138,9 @@
 ## Chat 20
 
  * Run cargo fmt and make sure there are instructions in the README for agents to always run this after they have done their changes.
+
+## Chat 21
+
+ * I added a constant called ABOUT_ARTICLE_CONTENT
+   In the handler for articles, I want to make sure we always pretend an article that uses that content. Its title should be "About" its date should be empty. Its feed_name can be "About" and feed_url empty.
+ * Update test_articles_index in routes_tests to validate the about article is being rendered.
