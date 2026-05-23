@@ -75,7 +75,7 @@ async fn it_formats_the_date() {
 }
 
 #[tokio::test]
-async fn it_sorts_and_limits_articles() {
+async fn it_sorts_articles() {
     let articles_repository = Arc::new(ArticlesRepository::default());
     let now = Utc::now();
     let mut articles = Vec::new();
@@ -106,8 +106,8 @@ async fn it_sorts_and_limits_articles() {
     
     // Should contain Article 39 (newest)
     assert!(body_str.contains("Article 39"));
-    // Should NOT contain Article 0 (oldest, beyond 30 limit)
-    assert!(!body_str.contains("Article 0"));
+    // Should ALSO contain Article 0 (oldest, no longer truncated)
+    assert!(body_str.contains("Article 0"));
 }
 
 #[tokio::test]

@@ -124,3 +124,7 @@
      The ArticleView will have the same fields as ArticleRecord except the date field should be of type string.
      The handler should format the date. The desired format should look like the following example: May 22 '26 @ 05:35 for 2026-05-22T05:35:00Z
  * The formatted date is in the UTC timezone, let's convert the date to the timezone America/Denver (Mountain Time) before formatting it. It's ok to hardcode that timezone.
+
+## Chat 18
+
+ * Let's remove truncation of the number of articles in the handler. We are now truncating per feed in the worker instead. All articles should be rendered.
